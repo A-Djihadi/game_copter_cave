@@ -1,5 +1,5 @@
 // Tests unitaires de la logique pure de « Copter Cave ».
-// Exécutables sans dépendance : `node --test tests/`.
+// Exécutables sans dépendance : `node --test`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 

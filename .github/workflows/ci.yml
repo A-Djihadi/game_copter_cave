@@ -21,7 +21,11 @@ jobs:
       - name: Images Docker disponibles
         run: sh scripts/check-images.sh
       - name: Tests unitaires (Node)
-        run: node --test tests/
+        # `node --test` sans argument : depuis Node 21, passer un dossier
+        # (`node --test tests/`) n'est plus recherché récursivement mais exécuté
+        # comme un fichier → MODULE_NOT_FOUND. La découverte par défaut couvre
+        # tests/*.test.js.
+        run: node --test
 
   image:
     needs: check

@@ -95,9 +95,9 @@ function resize() {
 
 function buildBackgroundGradient() {
   bgGradient = ctx.createLinearGradient(0, 0, 0, fieldHeight);
-  bgGradient.addColorStop(0, '#0a1226');
+  bgGradient.addColorStop(0, '#070810');
   bgGradient.addColorStop(0.5, '#05060a');
-  bgGradient.addColorStop(1, '#080d1a');
+  bgGradient.addColorStop(1, '#05060a');
 }
 
 function initParticles() {
@@ -246,7 +246,7 @@ function drawBackground() {
 
 function drawParticles() {
   ctx.save();
-  ctx.fillStyle = '#7dd3fc';
+  ctx.fillStyle = '#4bd5ee';
   for (const p of particles) {
     ctx.globalAlpha = p.alpha;
     ctx.beginPath();
@@ -272,25 +272,23 @@ function drawWalls() {
 function drawWallSegment(x, y, w, h, isTop) {
   if (h <= 0) return;
 
-  // Corps du mur : dégradé vertical, clair du côté du gap.
+  // Corps du mur : dégradé vertical sombre, clair du côté du gap.
   const grad = ctx.createLinearGradient(0, y, 0, y + h);
   if (isTop) {
-    grad.addColorStop(0, '#071a26');
-    grad.addColorStop(1, '#0c3a4a');
+    grad.addColorStop(0, '#070810');
+    grad.addColorStop(1, '#11141d');
   } else {
-    grad.addColorStop(0, '#0c3a4a');
-    grad.addColorStop(1, '#071a26');
+    grad.addColorStop(0, '#11141d');
+    grad.addColorStop(1, '#070810');
   }
   ctx.fillStyle = grad;
   ctx.fillRect(x, y, w, h);
 
-  // Liseré néon sur le bord du gap.
+  // Liseré cyan fin sur le bord du gap (sans halo néon).
   const edgeY = isTop ? y + h : y;
   ctx.save();
-  ctx.strokeStyle = '#22d3ee';
-  ctx.lineWidth = 2.5;
-  ctx.shadowColor = 'rgba(34,211,238,0.9)';
-  ctx.shadowBlur = 10;
+  ctx.strokeStyle = '#4bd5ee';
+  ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(x - 2, edgeY);
   ctx.lineTo(x + w + 2, edgeY);
@@ -300,7 +298,7 @@ function drawWallSegment(x, y, w, h, isTop) {
   // Stries verticales fines pour donner de la texture à la roche.
   ctx.save();
   ctx.globalAlpha = 0.18;
-  ctx.strokeStyle = '#67e8f9';
+  ctx.strokeStyle = '#4bd5ee';
   ctx.lineWidth = 1;
   for (let gx = x + 6; gx < x + w; gx += 10) {
     ctx.beginPath();
@@ -323,7 +321,7 @@ function drawHelicopter(now) {
   ctx.save();
   ctx.translate(0, -r - 7);
   ctx.rotate((now / 1000) * 24);
-  ctx.fillStyle = 'rgba(224,242,254,0.95)';
+  ctx.fillStyle = 'rgba(242,242,242,0.95)';
   ctx.fillRect(-18, -1.4, 36, 2.8);
   ctx.restore();
 
@@ -336,13 +334,13 @@ function drawHelicopter(now) {
   ctx.stroke();
 
   // Poutre de queue + stabilisateur.
-  ctx.strokeStyle = '#67e8f9';
+  ctx.strokeStyle = '#4bd5ee';
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(r * 0.8, r * 0.1);
   ctx.lineTo(r * 1.9, r * 0.35);
   ctx.stroke();
-  ctx.fillStyle = '#67e8f9';
+  ctx.fillStyle = '#4bd5ee';
   ctx.beginPath();
   ctx.moveTo(r * 1.9, r * 0.35);
   ctx.lineTo(r * 1.9 + 4, r * 0.15);
@@ -352,9 +350,9 @@ function drawHelicopter(now) {
 
   // Corps (capsule).
   const bodyGrad = ctx.createLinearGradient(0, -r, 0, r);
-  bodyGrad.addColorStop(0, '#8ef0fb');
-  bodyGrad.addColorStop(0.5, '#22d3ee');
-  bodyGrad.addColorStop(1, '#0e7490');
+  bodyGrad.addColorStop(0, '#7ce3f4');
+  bodyGrad.addColorStop(0.5, '#4bd5ee');
+  bodyGrad.addColorStop(1, '#1f7d99');
   ctx.fillStyle = bodyGrad;
   roundRect(ctx, -r * 0.95, -r, r * 1.9, r * 2, r * 0.7);
   ctx.fill();
@@ -383,8 +381,8 @@ function drawHelicopter(now) {
     ctx.translate(0, r * 1.5);
     const flame = 4 + Math.sin(now / 60) * 2;
     const fg = ctx.createLinearGradient(0, 0, 0, flame);
-    fg.addColorStop(0, '#fbbf24');
-    fg.addColorStop(1, 'rgba(251,191,36,0)');
+    fg.addColorStop(0, '#FFE81F');
+    fg.addColorStop(1, 'rgba(255,232,31,0)');
     ctx.fillStyle = fg;
     ctx.beginPath();
     ctx.moveTo(-r * 0.5, 0);

@@ -1,18 +1,46 @@
-/* Copter Cave — design rétro arcade, fond sombre et accents néon.
-   Tout le style vit ici (CSP : style-src 'self'). Aucune police distante. */
+/* Copter Cave — identité OhDjiGames (fond sombre, jaune accent, cyan).
+   Tout le style vit ici (CSP : style-src 'self'). Polices auto-hébergées (OFL),
+   aucun appel distant. */
+
+/* Polices (déjà présentes dans public/fonts/). */
+@font-face {
+  font-family: 'Rajdhani';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/rajdhani-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/rajdhani-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/rajdhani-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Press Start 2P';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/press-start-2p-latin-400-normal.woff2') format('woff2');
+}
 
 :root {
   --bg: #05060a;
-  --bg-soft: #0a0f1e;
-  --cyan: #22d3ee;
-  --cyan-dim: #0e7490;
-  --magenta: #e879f9;
-  --amber: #fbbf24;
-  --text: #e2e8f0;
-  --text-dim: #7c8aa5;
-  --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas,
-    "Liberation Mono", monospace;
-  --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --fg: #f2f2f2;
+  --muted: rgba(255, 255, 255, 0.75);
+  --accent: #FFE81F;
+  --cyan: #4bd5ee;
+  --border: rgba(255, 255, 255, 0.35);
+  --font-body: 'Rajdhani', sans-serif;
+  --font-pixel: 'Press Start 2P', monospace;
 }
 
 * {
@@ -25,10 +53,40 @@ html,
 body {
   height: 100%;
   background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
+  color: var(--fg);
+  font-family: var(--font-body);
   overflow: hidden;
   overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Lien « retour au hub » : fixe, toujours visible, au-dessus des overlays. */
+.hub-link {
+  position: fixed;
+  top: max(10px, env(safe-area-inset-top));
+  left: max(10px, env(safe-area-inset-left));
+  z-index: 10;
+  display: inline-block;
+  padding: 7px 10px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--muted);
+  background: rgba(5, 6, 10, 0.6);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.hub-link:hover,
+.hub-link:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+  outline: none;
 }
 
 /* Conteneur plein écran : le jeu occupe tout le viewport. */
@@ -49,22 +107,21 @@ body {
   cursor: pointer;
 }
 
-/* HUD : score affiché en jeu, en haut à gauche. */
+/* HUD : score affiché en jeu, en haut à droite (le hub-link occupe la gauche). */
 .hud {
   position: absolute;
   top: max(12px, env(safe-area-inset-top));
-  left: max(16px, env(safe-area-inset-left));
+  right: max(16px, env(safe-area-inset-right));
   z-index: 2;
   pointer-events: none;
 }
 
 .score {
-  font-family: var(--mono);
-  font-size: clamp(20px, 6vw, 34px);
-  font-weight: 700;
+  font-family: var(--font-pixel);
+  font-size: clamp(15px, 4.5vw, 24px);
   color: var(--cyan);
-  text-shadow: 0 0 8px var(--cyan), 0 0 20px rgba(34, 211, 238, 0.45);
-  letter-spacing: 0.06em;
+  text-shadow: 0 0 12px rgba(75, 213, 238, 0.25);
+  letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
 }
 
@@ -80,10 +137,7 @@ body {
   gap: clamp(12px, 3vh, 24px);
   padding: 24px;
   text-align: center;
-  background:
-    radial-gradient(ellipse at 50% 35%, rgba(34, 211, 238, 0.12), transparent 60%),
-    linear-gradient(180deg, rgba(5, 6, 10, 0.72), rgba(5, 6, 10, 0.9));
-  backdrop-filter: blur(2px);
+  background: rgba(5, 6, 10, 0.86);
 }
 
 .overlay[hidden] {
@@ -91,122 +145,105 @@ body {
 }
 
 .title {
-  font-family: var(--mono);
-  font-weight: 800;
-  font-size: clamp(40px, 14vw, 96px);
-  line-height: 0.95;
-  letter-spacing: 0.08em;
-  color: var(--cyan);
-  text-shadow:
-    0 0 6px var(--cyan),
-    0 0 18px rgba(34, 211, 238, 0.65),
-    0 0 42px rgba(34, 211, 238, 0.35);
-  animation: flicker 4s infinite;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: clamp(26px, 8vw, 52px);
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-shadow: 0 0 16px rgba(255, 232, 31, 0.25);
 }
 
 .title--small {
-  font-size: clamp(32px, 11vw, 72px);
-  color: var(--magenta);
-  text-shadow:
-    0 0 6px var(--magenta),
-    0 0 18px rgba(232, 121, 249, 0.6),
-    0 0 42px rgba(232, 121, 249, 0.3);
+  font-size: clamp(18px, 6vw, 36px);
+  color: var(--cyan);
+  text-shadow: 0 0 14px rgba(75, 213, 238, 0.25);
 }
 
 .tagline {
-  font-size: clamp(15px, 4vw, 20px);
-  color: var(--text);
-  letter-spacing: 0.04em;
+  font-weight: 500;
+  font-size: clamp(16px, 4vw, 20px);
+  color: var(--fg);
+  letter-spacing: 0.08em;
 }
 
 .highscore {
-  font-family: var(--mono);
+  font-weight: 600;
   font-size: clamp(14px, 4vw, 18px);
-  color: var(--amber);
+  color: var(--muted);
+  letter-spacing: 0.06em;
 }
 
 .highscore__label {
-  color: var(--text-dim);
+  color: var(--muted);
+}
+
+.highscore__value {
+  color: var(--accent);
 }
 
 .hint {
-  font-family: var(--mono);
+  font-weight: 500;
   font-size: clamp(11px, 3vw, 14px);
-  color: var(--text-dim);
-  letter-spacing: 0.12em;
+  color: var(--muted);
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .score-label {
-  font-family: var(--mono);
+  font-weight: 600;
   font-size: clamp(12px, 3.4vw, 15px);
-  color: var(--text-dim);
-  letter-spacing: 0.18em;
+  color: var(--muted);
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
 .final-score,
 .best-score {
-  font-family: var(--mono);
-  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 .final-score {
-  font-size: clamp(40px, 14vw, 80px);
-  color: var(--cyan);
-  text-shadow: 0 0 10px var(--cyan), 0 0 26px rgba(34, 211, 238, 0.5);
+  font-family: var(--font-pixel);
+  font-size: clamp(30px, 11vw, 60px);
+  color: var(--accent);
+  text-shadow: 0 0 16px rgba(255, 232, 31, 0.25);
 }
 
 .best-score {
-  font-size: clamp(20px, 7vw, 34px);
-  color: var(--amber);
-  text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+  font-weight: 700;
+  font-size: clamp(22px, 7vw, 34px);
+  color: var(--cyan);
 }
 
 .btn {
   margin-top: 6px;
-  padding: 14px 34px;
-  font-family: var(--mono);
-  font-size: clamp(15px, 4.5vw, 19px);
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  min-height: 44px;
+  padding: 0 26px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(14px, 4.5vw, 16px);
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--bg);
-  background: linear-gradient(180deg, #67e8f9, var(--cyan));
-  border: 2px solid var(--cyan);
-  border-radius: 8px;
+  color: var(--fg);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 2px;
   cursor: pointer;
-  box-shadow: 0 0 14px rgba(34, 211, 238, 0.55);
-  transition: transform 0.08s ease, box-shadow 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .btn:hover {
-  box-shadow: 0 0 22px rgba(34, 211, 238, 0.85);
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 .btn:active {
-  transform: translateY(2px);
+  transform: translateY(1px);
 }
 
 .btn:focus-visible {
-  outline: 2px solid var(--magenta);
-  outline-offset: 3px;
-}
-
-/* Léger clignotement néon du titre. */
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  92% { opacity: 1; }
-  93% { opacity: 0.7; }
-  94% { opacity: 1; }
-  97% { opacity: 0.85; }
-  98% { opacity: 1; }
-}
-
-/* Réduit les animations si l'utilisateur le demande. */
-@media (prefers-reduced-motion: reduce) {
-  .title {
-    animation: none;
-  }
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
